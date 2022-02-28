@@ -1,6 +1,7 @@
 create database if not exists miaosha default charset = utf8mb4;
 use miaosha;
 
+-- 测试数据库连接的表
 CREATE TABLE IF NOT EXISTS `user` (
     `id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '主键id',
     `name` varchar(64) unsigned NOT NULL DEFAULT '' COMMENT '用户姓名',
