@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 public class MiaoshaUserService {
 
 
-    public static final String COOKI_NAME_TOKEN = "token";
+    public static final String COOKIE_NAME_TOKEN = "token";
 
     @Autowired
     MiaoshaUserDao miaoshaUserDao;
@@ -64,7 +64,7 @@ public class MiaoshaUserService {
         if (!calcPass.equals(dbPass)) {
             throw new GlobalException(CodeMsg.PASSWORD_ERROR);
         }
-        // 生成 cookie
+        // 生成 token 存储到 cookie
         String token = UUIDUtil.uuid();
         addCookie(response, token, user);
         return true;
@@ -72,9 +72,9 @@ public class MiaoshaUserService {
 
     private void addCookie(HttpServletResponse response, String token, MiaoshaUser user) {
         redisService.set(MiaoshaUserKey.token, token, user);
-        Cookie cookie = new Cookie(COOKI_NAME_TOKEN, token);
-        cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
-        cookie.setPath("/");
+        Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
+        cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds()); // 设置 cookie 有效期
+        cookie.setPath("/"); // /catalog, which makes the cookie visible to all directories on the server under /catalog.
         response.addCookie(cookie);
     }
 

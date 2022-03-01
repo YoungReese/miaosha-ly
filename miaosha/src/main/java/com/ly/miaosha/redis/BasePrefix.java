@@ -7,7 +7,7 @@ public abstract class BasePrefix implements KeyPrefix {
     private String prefix;
 
     public BasePrefix(String prefix) {
-        this(0, prefix); // 0 代表永不过期
+        this(0, prefix); // 对于 redis 来说，0 代表永不过期
     }
 
     public BasePrefix(int expireSeconds, String prefix) {
