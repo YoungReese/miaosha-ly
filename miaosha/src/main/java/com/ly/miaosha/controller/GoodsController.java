@@ -11,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/goods")
 public class GoodsController {
@@ -31,6 +33,9 @@ public class GoodsController {
     @RequestMapping("/to_list")
     public String list(Model model, MiaoshaUser user) {
         model.addAttribute("user", user);
+        // 查询商品列表
+        List<GoodsVo> goodsList = goodsService.listGoodsVo();
+        model.addAttribute("goodsList", goodsList);
         return "goods_list";
     }
 
@@ -41,13 +46,13 @@ public class GoodsController {
 
         GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
         model.addAttribute("goods", goods);
+        System.out.println(goods);
 
         long startAt = goods.getStartDate().getTime();
         long endAt = goods.getEndDate().getTime();
         long now = System.currentTimeMillis();
 
-        int miaoshaStatus = 0;
-        int remainSeconds = 0;
+        int miaoshaStatus, remainSeconds;
         if (now < startAt) {//秒杀还没开始，倒计时
             miaoshaStatus = 0;
             remainSeconds = (int) ((startAt - now) / 1000);

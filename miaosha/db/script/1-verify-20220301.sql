@@ -9,4 +9,4 @@ CREATE TABLE IF NOT EXISTS `miaosha_user` (
     `last_login_date` datetime DEFAULT NULL COMMENT '上蔟登录时间',
     `login_count` int(11) DEFAULT '0' COMMENT '登录次数',
     PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=18912341246 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=18912341246 DEFAULT CHARSET=utf8mb4;
