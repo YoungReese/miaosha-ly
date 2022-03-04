@@ -1,5 +1,7 @@
 package com.ly.miaosha.service;
 
+import com.ly.miaosha.controller.LoginController;
+import com.ly.miaosha.controller.UserController;
 import com.ly.miaosha.dao.MiaoshaUserDao;
 import com.ly.miaosha.domain.MiaoshaUser;
 import com.ly.miaosha.exception.GlobalException;
@@ -10,6 +12,8 @@ import com.ly.miaosha.util.MD5Util;
 import com.ly.miaosha.util.UUIDUtil;
 import com.ly.miaosha.vo.LoginVo;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 @Service
 public class MiaoshaUserService {
 
-
+    private static Logger log = LoggerFactory.getLogger(MiaoshaUserService.class);
     public static final String COOKIE_NAME_TOKEN = "token";
 
     @Autowired
@@ -40,6 +44,7 @@ public class MiaoshaUserService {
         MiaoshaUser user = redisService.get(MiaoshaUserKey.token, token, MiaoshaUser.class);
         // 延长有效期
         if (user != null) {
+//            log.info("延长用户 token 有效期，token = {}", token);
             addCookie(response, token, user);
         }
         return user;

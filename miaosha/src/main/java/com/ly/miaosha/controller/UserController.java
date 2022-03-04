@@ -1,24 +1,27 @@
 package com.ly.miaosha.controller;
 
+import com.ly.miaosha.domain.MiaoshaUser;
 import com.ly.miaosha.redis.RedisService;
+import com.ly.miaosha.result.CodeMsg;
 import com.ly.miaosha.result.Result;
 import com.ly.miaosha.service.MiaoshaUserService;
-import com.ly.miaosha.vo.LoginVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
+/**
+ * 获取用户信息，用于 JMeter 压测
+ */
 @Controller
-@RequestMapping("/login")
-public class LoginController {
+@RequestMapping("/user")
+public class UserController {
 
-    private static Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static Logger log = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     MiaoshaUserService userService;
@@ -26,17 +29,14 @@ public class LoginController {
     @Autowired
     RedisService redisService;
 
-    @RequestMapping("/to_login")
-    public String toLogin() {
-        return "login";
+    @RequestMapping("/info")
+    @ResponseBody
+    public Result<MiaoshaUser> info(Model model, MiaoshaUser user) {
+        if (user == null) {
+            return Result.error(CodeMsg.SESSION_ERROR);
+        }
+//        log.info(user.toString());
+        return Result.success(user);
     }
 
-    @RequestMapping("/do_login")
-    @ResponseBody
-    public Result<Boolean> doLogin(HttpServletResponse response, @Valid LoginVo loginVo) {
-//        log.info(loginVo.toString());
-        // 登录
-        userService.login(response, loginVo);
-        return Result.success(true);
-    }
 }

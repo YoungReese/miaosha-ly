@@ -18,7 +18,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/goods")
 public class GoodsController {
-    private static Logger log = LoggerFactory.getLogger(LoginController.class);
+    private static Logger log = LoggerFactory.getLogger(GoodsController.class);
     @Autowired
     MiaoshaUserService userService;
 
