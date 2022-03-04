@@ -5,6 +5,8 @@ import com.ly.miaosha.redis.RedisService;
 import com.ly.miaosha.service.GoodsService;
 import com.ly.miaosha.service.MiaoshaUserService;
 import com.ly.miaosha.vo.GoodsVo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +18,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/goods")
 public class GoodsController {
-
+    private static Logger log = LoggerFactory.getLogger(LoginController.class);
     @Autowired
     MiaoshaUserService userService;
 
@@ -36,6 +38,7 @@ public class GoodsController {
         // 查询商品列表
         List<GoodsVo> goodsList = goodsService.listGoodsVo();
         model.addAttribute("goodsList", goodsList);
+        log.info(goodsList.toString());
         return "goods_list";
     }
 

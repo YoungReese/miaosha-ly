@@ -19,7 +19,8 @@
     <script type="text/javascript" th:src="@{/js/common.js}"></script>
 </head>
 <body>
-<p th:text="'hello:'+${user.nickname}"></p>
+<span th:if="${user eq null}"> 您尚未登录！</p> <br/></span>
+<span th:if="${user ne null}"> <p th:text="'hello:'+${user.nickname}"></p> <br/></span>
 <div class="panel panel-default">
     <div class="panel-heading">秒杀商品列表</div>
     <table class="table" id="goodslist">
