@@ -3,8 +3,10 @@ package com.ly.miaosha.controller;
 import com.ly.miaosha.domain.MiaoshaUser;
 import com.ly.miaosha.redis.GoodsKey;
 import com.ly.miaosha.redis.RedisService;
+import com.ly.miaosha.result.Result;
 import com.ly.miaosha.service.GoodsService;
 import com.ly.miaosha.service.MiaoshaUserService;
+import com.ly.miaosha.vo.GoodsDetailVo;
 import com.ly.miaosha.vo.GoodsVo;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -115,33 +117,33 @@ public class GoodsController {
         return html;
     }
 
+    /**
+     * 前后端分离的标准写法
+     */
     @RequestMapping("/to_detail/{goodsId}")
-    public String detail(Model model, MiaoshaUser user,
-                         @PathVariable("goodsId") long goodsId) {
-        model.addAttribute("user", user);
+    @ResponseBody
+    public Result<GoodsDetailVo> detail(HttpServletRequest request, HttpServletResponse response, Model model, MiaoshaUser user, @PathVariable("goodsId") long goodsId) {
 
         GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
-        model.addAttribute("goods", goods);
-        System.out.println(goods);
-
         long startAt = goods.getStartDate().getTime();
         long endAt = goods.getEndDate().getTime();
         long now = System.currentTimeMillis();
-
         int miaoshaStatus, remainSeconds;
-        if (now < startAt) {//秒杀还没开始，倒计时
+        if (now < startAt) {      // 秒杀还没开始，倒计时
             miaoshaStatus = 0;
             remainSeconds = (int) ((startAt - now) / 1000);
-        } else if (now > endAt) {//秒杀已经结束
+        } else if (now > endAt) { // 秒杀已经结束
             miaoshaStatus = 2;
             remainSeconds = -1;
-        } else {//秒杀进行中
+        } else { // 秒杀进行中
             miaoshaStatus = 1;
             remainSeconds = 0;
         }
-        model.addAttribute("miaoshaStatus", miaoshaStatus);
-        model.addAttribute("remainSeconds", remainSeconds);
-        return "goods_detail";
+        GoodsDetailVo vo = new GoodsDetailVo();
+        vo.setGoods(goods);
+        vo.setUser(user);
+        vo.setRemainSeconds(remainSeconds);
+        vo.setMiaoshaStatus(miaoshaStatus);
+        return Result.success(vo);
     }
 }
-
