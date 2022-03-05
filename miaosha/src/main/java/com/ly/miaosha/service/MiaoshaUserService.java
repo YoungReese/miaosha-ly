@@ -32,10 +32,40 @@ public class MiaoshaUserService {
     @Autowired
     RedisService redisService;
 
+    /**
+     * 缓存对象
+     */
     public MiaoshaUser getById(long id) {
-        return miaoshaUserDao.getById(id);
+        // 取缓存
+        MiaoshaUser miaoshaUser = redisService.get(MiaoshaUserKey.getById, "" + id, MiaoshaUser.class);
+        if (miaoshaUser != null) {
+            return miaoshaUser;
+        }
+        miaoshaUser = miaoshaUserDao.getById(id);
+        if (miaoshaUser != null) {
+            redisService.set(MiaoshaUserKey.getById, "" + id, miaoshaUser);
+        }
+        return miaoshaUser;
     }
 
+    // http://blog.csdn.net/tTU1EvLDeLFq5btqiK/article/details/78693323
+    public boolean updatePassword(String token, long id, String formPass) {
+        // 取 miaoshaUser
+        MiaoshaUser miaoshaUser = getById(id);
+        if (miaoshaUser == null) {
+            throw new GlobalException(CodeMsg.MOBILE_NOT_EXIST);
+        }
+        // 更新数据库
+        MiaoshaUser toBeUpdate = new MiaoshaUser(); // 这里创建新对象是为了提高性能，直接更新原 miaoshaUser 会产生很多 binlog
+        toBeUpdate.setId(id);
+        toBeUpdate.setPassword(MD5Util.formPassToDBPass(formPass, miaoshaUser.getSalt()));
+        miaoshaUserDao.update(toBeUpdate);
+        // 处理缓存
+        redisService.delete(MiaoshaUserKey.getById, "" + id);
+        miaoshaUser.setPassword(toBeUpdate.getPassword());
+        redisService.set(MiaoshaUserKey.token, token, miaoshaUser);
+        return true;
+    }
 
     public MiaoshaUser getByToken(HttpServletResponse response, String token) {
         if (StringUtils.isEmpty(token)) {
