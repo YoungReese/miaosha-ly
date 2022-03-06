@@ -97,11 +97,11 @@ public class MiaoshaService {
         return str;
     }
 
-    public BufferedImage createVerifyCode(MiaoshaUser user, long goodsId) {
+    public BufferedImage createVerifyImage(MiaoshaUser user, long goodsId) {
         if (user == null || goodsId <= 0) {
             return null;
         }
-        int width = 80;
+        int width = 100;
         int height = 32;
         // create the image
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -121,13 +121,13 @@ public class MiaoshaService {
             g.drawOval(x, y, 0, 0);
         }
         // generate a random code
-        String verifyCode = generateVerifyCode(rdm);
+        String verifyExp = generateVerifyExp(rdm);
         g.setColor(new Color(0, 100, 0));
         g.setFont(new Font("Candara", Font.BOLD, 24));
-        g.drawString(verifyCode, 8, 24);
+        g.drawString(verifyExp, 8, 24);
         g.dispose();
         // 把验证码存到 redis 中
-        int rnd = calc(verifyCode);
+        int rnd = calc(verifyExp);
         redisService.set(MiaoshaKey.getMiaoshaVerifyCode, user.getId() + "," + goodsId, rnd);
         // 输出图片
         return image;
@@ -137,14 +137,18 @@ public class MiaoshaService {
         if (user == null || goodsId <= 0) {
             return false;
         }
-        Integer codeOld = redisService.get(MiaoshaKey.getMiaoshaVerifyCode, user.getId() + "," + goodsId, Integer.class);
-        if (codeOld == null || codeOld - verifyCode != 0) {
+        Integer rightCode = redisService.get(MiaoshaKey.getMiaoshaVerifyCode, user.getId() + "," + goodsId, Integer.class);
+        if (rightCode == null || rightCode - verifyCode != 0) {
             return false;
         }
+        // 删除，以防下次还用这个过期的验证码
         redisService.delete(MiaoshaKey.getMiaoshaVerifyCode, user.getId() + "," + goodsId);
         return true;
     }
 
+    /**
+     * Java15 之后使用需要添加依赖，详见 pom 文件
+     */
     private static int calc(String exp) {
         try {
             ScriptEngineManager manager = new ScriptEngineManager();
@@ -161,13 +165,17 @@ public class MiaoshaService {
     /**
      * + - *
      */
-    private String generateVerifyCode(Random rdm) {
+    private String generateVerifyExp(Random rdm) {
         int num1 = rdm.nextInt(10);
         int num2 = rdm.nextInt(10);
         int num3 = rdm.nextInt(10);
         char op1 = ops[rdm.nextInt(3)];
         char op2 = ops[rdm.nextInt(3)];
-        String exp = "" + num1 + op1 + num2 + op2 + num3;
-        return exp;
+        return "" + num1 + op1 + num2 + op2 + num3;
+    }
+
+    public static void main(String[] args) {
+        String exp = "(1+3*7-8)/2";
+        System.out.println(calc(exp));
     }
 }

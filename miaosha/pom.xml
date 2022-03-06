@@ -89,6 +89,13 @@
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
+        <!-- Java15 之后移除了 Nashorn JavaScript Engine，如需使用则手动添加 -->
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>15.3</version>
+        </dependency>
+
         <!--        &lt;!&ndash; To use the processor, include a dependency on spring-boot-configuration-processor. &ndash;&gt;-->
         <!--        &lt;!&ndash; https://docs.spring.io/spring-boot/docs/2.6.4/reference/html/configuration-metadata.html#appendix.configuration-metadata.annotation-processor &ndash;&gt;-->
         <!--        <dependency>-->

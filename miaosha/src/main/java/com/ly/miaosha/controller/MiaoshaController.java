@@ -226,29 +226,32 @@ public class MiaoshaController implements InitializingBean {
         if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
-//        boolean check = miaoshaService.checkVerifyCode(user, goodsId, verifyCode);
-//        if (!check) {
-//            return Result.error(CodeMsg.REQUEST_ILLEGAL);
-//        }
+        boolean pass = miaoshaService.checkVerifyCode(user, goodsId, verifyCode);
+        if (!pass) {
+            return Result.error(CodeMsg.REQUEST_ILLEGAL);
+        }
         String path = miaoshaService.createMiaoshaPath(user, goodsId);
         return Result.success(path);
     }
 
 
+    /**
+     * 生成图片验证码接口
+     */
     @RequestMapping(value = "/verifyCode", method = RequestMethod.GET)
     @ResponseBody
-    public Result<String> getMiaoshaVerifyCod(HttpServletResponse response, MiaoshaUser user,
-                                              @RequestParam("goodsId") long goodsId) {
+    public Result<String> getMiaoshaVerifyCode(HttpServletResponse response, MiaoshaUser user,
+                                               @RequestParam("goodsId") long goodsId) {
         if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
         try {
-            BufferedImage image = miaoshaService.createVerifyCode(user, goodsId);
+            BufferedImage image = miaoshaService.createVerifyImage(user, goodsId);
             OutputStream out = response.getOutputStream();
             ImageIO.write(image, "JPEG", out);
             out.flush();
             out.close();
-            return null;
+            return null; // 成功返回 null 是因为结果已经通过流返回出去了，所以这里可以直接返回 null
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error(CodeMsg.MIAOSHA_FAIL);
