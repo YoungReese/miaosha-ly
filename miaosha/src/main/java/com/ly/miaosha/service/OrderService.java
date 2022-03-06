@@ -22,9 +22,13 @@ public class OrderService {
     @Autowired
     RedisService redisService;
 
+    /**
+     * 优化：生成订单后将订单数据写入 redis，避免去数据库查询
+     * todo：缓存没有，去数据库查询
+     */
     public MiaoshaOrder getMiaoshaOrderByUserIdGoodsId(long userId, long goodsId) {
-        return orderDao.getMiaoshaOrderByUserIdGoodsId(userId, goodsId);
-//        return redisService.get(OrderKey.getMiaoshaOrderByUidGid, "" + userId + "_" + goodsId, MiaoshaOrder.class);
+//        return orderDao.getMiaoshaOrderByUserIdGoodsId(userId, goodsId);
+        return redisService.get(OrderKey.getMiaoshaOrderByUidGid, "" + userId + "_" + goodsId, MiaoshaOrder.class);
     }
 
     public OrderInfo getOrderById(long orderId) {
@@ -32,6 +36,10 @@ public class OrderService {
     }
 
 
+    /**
+     * 这里可以利用数据库的唯一索引（miaosha_order: userId + goodsId）解决一个用户同时抢两次
+     * 实际生产环境会有验证码保证同一个用户不会抢两次
+     */
     @Transactional
     public OrderInfo createOrder(MiaoshaUser user, GoodsVo goods) {
         OrderInfo orderInfo = new OrderInfo();
@@ -51,7 +59,10 @@ public class OrderService {
         miaoshaOrder.setUserId(user.getId());
         orderDao.insertMiaoshaOrder(miaoshaOrder);
 
-//        redisService.set(OrderKey.getMiaoshaOrderByUidGid, "" + user.getId() + "_" + goods.getId(), miaoshaOrder);
+        /**
+         * 订单生成后，将订单信息写入 redis 方便查询
+         */
+        redisService.set(OrderKey.getMiaoshaOrderByUidGid, "" + user.getId() + "_" + goods.getId(), miaoshaOrder);
 
         return orderInfo;
     }
