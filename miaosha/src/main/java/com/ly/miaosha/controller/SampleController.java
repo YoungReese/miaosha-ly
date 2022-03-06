@@ -1,6 +1,7 @@
 package com.ly.miaosha.controller;
 
 import com.ly.miaosha.domain.User;
+import com.ly.miaosha.rabbitmq.MQSender;
 import com.ly.miaosha.redis.RedisService;
 import com.ly.miaosha.redis.UserKey;
 import com.ly.miaosha.result.Result;
@@ -20,6 +21,16 @@ public class SampleController {
     @Autowired
     RedisService redisService;
 
+    @Autowired
+    MQSender sender;
+
+    @RequestMapping("/mq")
+    @ResponseBody
+    public Result<String> mq() {
+        String msg = "hello, ly!";
+        sender.send(msg);
+        return Result.success(msg);
+    }
 
     @RequestMapping("/db/get")
     @ResponseBody
