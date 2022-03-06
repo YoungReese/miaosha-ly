@@ -84,8 +84,8 @@ public class MiaoshaService {
         if (user == null || path == null) {
             return false;
         }
-        String pathOld = redisService.get(MiaoshaKey.getMiaoshaPath, "" + user.getId() + "_" + goodsId, String.class);
-        return path.equals(pathOld);
+        String checkedPath = redisService.get(MiaoshaKey.getMiaoshaPath, "" + user.getId() + "_" + goodsId, String.class);
+        return path.equals(checkedPath);
     }
 
     public String createMiaoshaPath(MiaoshaUser user, long goodsId) {

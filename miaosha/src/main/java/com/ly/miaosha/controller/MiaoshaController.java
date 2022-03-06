@@ -116,14 +116,19 @@ public class MiaoshaController implements InitializingBean {
     /**
      * rest 风格的秒杀接口
      */
-    @RequestMapping(value = "/do_miaosha", method = RequestMethod.POST)
+    @RequestMapping(value = "/{path}/do_miaosha", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Integer> miaosha(Model model, MiaoshaUser user, @RequestParam("goodsId") long goodsId) {
+    public Result<Integer> miaosha(Model model, MiaoshaUser user, @RequestParam("goodsId") long goodsId, @PathVariable("path") String path) {
         model.addAttribute("user", user);
         if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
 
+        // 验证 path
+        boolean checked = miaoshaService.checkPath(user, goodsId, path);
+        if (!checked) {
+            return Result.error(CodeMsg.REQUEST_ILLEGAL);
+        }
         // 内存标记，减少 redis 访问
         boolean over = localOverMap.get(goodsId);
         if (over) {
@@ -217,15 +222,14 @@ public class MiaoshaController implements InitializingBean {
     @ResponseBody
     public Result<String> getMiaoshaPath(HttpServletRequest request, MiaoshaUser user,
                                          @RequestParam("goodsId") long goodsId,
-                                         @RequestParam(value = "verifyCode", defaultValue = "0") int verifyCode
-    ) {
+                                         @RequestParam(value = "verifyCode", defaultValue = "0") int verifyCode) {
         if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
-        boolean check = miaoshaService.checkVerifyCode(user, goodsId, verifyCode);
-        if (!check) {
-            return Result.error(CodeMsg.REQUEST_ILLEGAL);
-        }
+//        boolean check = miaoshaService.checkVerifyCode(user, goodsId, verifyCode);
+//        if (!check) {
+//            return Result.error(CodeMsg.REQUEST_ILLEGAL);
+//        }
         String path = miaoshaService.createMiaoshaPath(user, goodsId);
         return Result.success(path);
     }
