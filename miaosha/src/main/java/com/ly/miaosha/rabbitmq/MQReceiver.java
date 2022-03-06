@@ -55,21 +55,20 @@ public class MQReceiver {
     public void receiveQueue(String message) {
         log.info("receive message:" + message);
     }
-//		
-//		@RabbitListener(queues=MQConfig.TOPIC_QUEUE1)
-//		public void receiveTopic1(String message) {
-//			log.info(" topic  queue1 message:"+message);
-//		}
-//		
-//		@RabbitListener(queues=MQConfig.TOPIC_QUEUE2)
-//		public void receiveTopic2(String message) {
-//			log.info(" topic  queue2 message:"+message);
-//		}
-//		
-//		@RabbitListener(queues=MQConfig.HEADER_QUEUE)
-//		public void receiveHeaderQueue(byte[] message) {
-//			log.info(" header  queue message:"+new String(message));
-//		}
-//		
+
+    @RabbitListener(queues = MQConfig.TOPIC_QUEUE1)
+    public void receiveTopic1(String message) {
+        log.info("receive message, topic queue1 message:" + message);
+    }
+
+    @RabbitListener(queues = MQConfig.TOPIC_QUEUE2)
+    public void receiveTopic2(String message) {
+        log.info("receive message, topic queue2 message:" + message);
+    }
+
+    @RabbitListener(queues = MQConfig.HEADERS_QUEUE)
+    public void receiveHeadersQueue(byte[] message) { // 接收到的是字节数组
+        log.info("receive message, headers queue message:" + new String(message));
+    }
 
 }
