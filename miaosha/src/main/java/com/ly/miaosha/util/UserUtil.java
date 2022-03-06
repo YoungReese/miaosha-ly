@@ -55,7 +55,7 @@ public class UserUtil {
 //        conn.close();
 //        System.out.println("insert to db");
 
-        // 登录，生成token
+        // 登录，生成 token
         String urlString = "http://localhost:8080/login/do_login";
         File file = new File("/Users/young/Desktop/JMeter-test/token/tokens.txt");
         if (file.exists()) {
@@ -100,6 +100,6 @@ public class UserUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        createUser(5000);
+        createUser(4000);
     }
 }

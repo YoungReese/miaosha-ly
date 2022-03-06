@@ -55,7 +55,7 @@ public class MiaoshaService {
 
     public long getMiaoshaResult(Long userId, long goodsId) {
         MiaoshaOrder order = orderService.getMiaoshaOrderByUserIdGoodsId(userId, goodsId);
-        if (order != null) {//秒杀成功
+        if (order != null) { // 秒杀成功
             return order.getOrderId();
         } else {
             boolean isOver = getGoodsOver(goodsId);
@@ -103,7 +103,7 @@ public class MiaoshaService {
         }
         int width = 80;
         int height = 32;
-        //create the image
+        // create the image
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
         // set the background color
@@ -126,10 +126,10 @@ public class MiaoshaService {
         g.setFont(new Font("Candara", Font.BOLD, 24));
         g.drawString(verifyCode, 8, 24);
         g.dispose();
-        //把验证码存到redis中
+        // 把验证码存到 redis 中
         int rnd = calc(verifyCode);
         redisService.set(MiaoshaKey.getMiaoshaVerifyCode, user.getId() + "," + goodsId, rnd);
-        //输出图片
+        // 输出图片
         return image;
     }
 

@@ -37,6 +37,7 @@ public class MQReceiver {
         MiaoshaUser user = mm.getUser();
         long goodsId = mm.getGoodsId();
 
+        // recheck it
         GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);
         int stock = goods.getStockCount();
         if (stock <= 0) {

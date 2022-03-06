@@ -23,7 +23,8 @@ public class OrderService {
     RedisService redisService;
 
     /**
-     * 优化：生成订单后将订单数据写入 redis，避免去数据库查询
+     * 优化：生成订单后将订单数据已经写入 redis，
+     * 从 redis 中去拿，避免去数据库查询
      * todo：缓存没有，去数据库查询
      */
     public MiaoshaOrder getMiaoshaOrderByUserIdGoodsId(long userId, long goodsId) {
@@ -52,7 +53,7 @@ public class OrderService {
         orderInfo.setOrderChannel(1);
         orderInfo.setStatus(0);
         orderInfo.setUserId(user.getId());
-        orderDao.insert(orderInfo);
+        orderDao.insert(orderInfo); // mybatis 插入成功后会把 id 插入进来
         MiaoshaOrder miaoshaOrder = new MiaoshaOrder();
         miaoshaOrder.setGoodsId(goods.getId());
         miaoshaOrder.setOrderId(orderInfo.getId());

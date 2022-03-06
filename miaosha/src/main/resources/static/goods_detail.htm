@@ -58,10 +58,10 @@
                 <span id="miaoshaTip"></span>
             </td>
             <td>
-<!--                <form id="miaoshaForm" method="post" action="/miaosha/do_miaosha">-->
-<!--                    <button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>-->
-<!--                    <input type="hidden" name="goodsId" id="goodsId"/>-->
-<!--                </form>-->
+                <!--                <form id="miaoshaForm" method="post" action="/miaosha/do_miaosha">-->
+                <!--                    <button class="btn btn-primary btn-block" type="submit" id="buyButton">立即秒杀</button>-->
+                <!--                    <input type="hidden" name="goodsId" id="goodsId"/>-->
+                <!--                </form>-->
                 <!--                <div class="row">-->
                 <!--                    <div class="form-inline">-->
                 <!--                        <img id="verifyCodeImg" width="80" height="32" style="display:none"-->
@@ -72,8 +72,9 @@
                 <!--                    </div>-->
                 <!--                </div>-->
                 <!--                <input type="hidden" name="goodsId" id="goodsId"/>-->
-                <button class="btn btn-primary btn-block" type="button" id="buyButton"onclick="doMiaosha()">立即秒杀</button>
-                <input type="hidden" name="goodsId"  id="goodsId" />
+                <button class="btn btn-primary btn-block" type="button" id="buyButton" onclick="doMiaosha()">立即秒杀
+                </button>
+                <input type="hidden" name="goodsId" id="goodsId"/>
             </td>
         </tr>
         <tr>
@@ -130,7 +131,7 @@
                     var result = data.data;
                     if (result < 0) {
                         layer.msg("对不起，秒杀失败");
-                    } else if (result == 0) {//继续轮询
+                    } else if (result == 0) { // 继续轮询
                         setTimeout(function () {
                             getMiaoshaResult(goodsId);
                         }, 200);
@@ -155,15 +156,15 @@
 
     function doMiaosha(path) {
         $.ajax({
-            url:"/miaosha/do_miaosha",
+            url: "/miaosha/do_miaosha",
             type: "POST",
             data: {
                 goodsId: $("#goodsId").val()
             },
             success: function (data) {
                 if (data.code == 0) {
-                    window.location.href="/order_detail.htm?orderId="+data.data.id;
-                    // getMiaoshaResult($("#goodsId").val());
+                    // window.location.href="/order_detail.htm?orderId="+data.data.id;
+                    getMiaoshaResult($("#goodsId").val());
                 } else {
                     layer.msg(data.msg);
                 }
