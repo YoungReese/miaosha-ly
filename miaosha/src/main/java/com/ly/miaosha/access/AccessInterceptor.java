@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.Cookie;
@@ -19,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
 
 @Service
-public class AccessInterceptor extends HandlerInterceptorAdapter {
+public class AccessInterceptor implements HandlerInterceptor {
 
     @Autowired
     MiaoshaUserService userService;

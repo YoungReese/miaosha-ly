@@ -6,10 +6,7 @@ import com.ly.miaosha.domain.MiaoshaUser;
 import com.ly.miaosha.domain.OrderInfo;
 import com.ly.miaosha.rabbitmq.MQSender;
 import com.ly.miaosha.rabbitmq.MiaoshaMessage;
-import com.ly.miaosha.redis.GoodsKey;
-import com.ly.miaosha.redis.MiaoshaKey;
-import com.ly.miaosha.redis.OrderKey;
-import com.ly.miaosha.redis.RedisService;
+import com.ly.miaosha.redis.*;
 import com.ly.miaosha.result.CodeMsg;
 import com.ly.miaosha.result.Result;
 import com.ly.miaosha.service.GoodsService;
@@ -217,6 +214,10 @@ public class MiaoshaController implements InitializingBean {
         return Result.success(result);
     }
 
+    /**
+     * value = "verifyCode", defaultValue = "0"
+     * 这里使用 default = 0 方便我们测试这个注解 @AccessLimit 的功能
+     */
     @AccessLimit(seconds = 5, maxCount = 5, needLogin = true)
     @RequestMapping(value = "/path", method = RequestMethod.GET)
     @ResponseBody
@@ -226,6 +227,20 @@ public class MiaoshaController implements InitializingBean {
         if (user == null) {
             return Result.error(CodeMsg.SESSION_ERROR);
         }
+
+//        // 查询次数限制，后续使用注解和拦截器的通用方式替代
+//        String uri = request.getRequestURI();
+//        String key = uri + "_" + user.getId();
+//        Integer count = redisService.get(AccessKey.access, key, Integer.class);
+//        if (count == null) {
+//            redisService.set(AccessKey.access, key, 1);
+//        } else if (count < 5) {
+//            redisService.incr(AccessKey.access, key);
+//        } else {
+//            return Result.error(CodeMsg.ACCESS_LIMIT_REACHED);
+//        }
+
+
         boolean pass = miaoshaService.checkVerifyCode(user, goodsId, verifyCode);
         if (!pass) {
             return Result.error(CodeMsg.REQUEST_ILLEGAL);

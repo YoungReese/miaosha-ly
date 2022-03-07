@@ -10,4 +10,6 @@ public class AccessKey extends BasePrefix {
         return new AccessKey(expireSeconds, "access");
     }
 
+    public static AccessKey access = new AccessKey(5, "access");
+
 }
