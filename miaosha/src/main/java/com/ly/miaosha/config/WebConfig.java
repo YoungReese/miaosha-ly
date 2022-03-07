@@ -9,6 +9,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.util.List;
 
+/**
+ * liyang 2022-03-08
+ * 经过 debug ，拦截器中的 preHandle 方法会先于 resolveArgument 执行
+ * todo：因此 resolveArgument 方法中的部分代码可以提取到 preHandle 中
+ */
 @Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 

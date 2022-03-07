@@ -17,6 +17,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.OutputStream;
 
 @Service
@@ -66,13 +67,19 @@ public class AccessInterceptor implements HandlerInterceptor {
         return true;
     }
 
-    private void render(HttpServletResponse response, CodeMsg cm) throws Exception {
+    /**
+     * 拦截器的 preHandle 用于表示是否拦截，但是在拦截后需要给前端页面一个提示，
+     * 因此这里实现一个 render 方法用于给前段页面一个提示信息
+     */
+    private void render(HttpServletResponse response, CodeMsg cm) {
         response.setContentType("application/json;charset=UTF-8");
-        OutputStream out = response.getOutputStream();
-        String str = JSON.toJSONString(Result.error(cm));
-        out.write(str.getBytes("UTF-8"));
-        out.flush();
-        out.close();
+        try (OutputStream out = response.getOutputStream()) {
+            String str = JSON.toJSONString(Result.error(cm));
+            out.write(str.getBytes("UTF-8"));
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private MiaoshaUser getUser(HttpServletRequest request, HttpServletResponse response) {
